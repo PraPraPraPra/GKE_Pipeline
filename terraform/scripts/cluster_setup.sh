@@ -84,3 +84,15 @@ wget https://gitlab.com/b.a.lopes/scrumify-challenge-infrastructure/-/raw/main/p
 kubectl apply -f postgres-ilb-service.yaml -n dev-fernando-cluster12345
 rm postgres-ilb-service.yaml
 ###
+
+###
+# grep -o doesn't print the whole line, just the match that we want.
+export POD_NAME=$(kubectl --namespace=dev-fernando-cluster12345 get pods -l app=postgres | grep  -o "postgres\S*")
+kubectl  --namespace=dev-fernando-cluster12345 exec --stdin --tty $POD_NAME -- /bin/bash
+#Does this work? Probably...
+psql -h localhost -U postgresadmin -p 5432 postgresdb
+CREATE SCHEMA IF NOT EXISTS scrumify;
+ALTER SCHEMA scrumify OWNER TO postgresadmin;
+\q
+exit
+###
